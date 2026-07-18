@@ -7,6 +7,7 @@ from pyxlsweb import PYXLSWEB
 SESSION_STORAGE = {}
 PUBLIC_DIR = os.path.abspath("./res")
 
+
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
  def do_GET(self):
   mses = SESSION_STORAGE

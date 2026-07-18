@@ -30,25 +30,52 @@ class PYXLSWEB:
    ald+=self.conele(da)   
   return ald
  
- def block(self,con):
+ def block(self,con,ksy):
   res=""
   blk = read_xls("getsheet",con,"website.xlsx")
   res = self.rowscolstojsonwithhead(blk)
-  tohtml = self.tohtml(res)
+
+  tohtml = self.ktod(str(ksy),str(res))
+  tohtml = self.tohtml(tohtml)
   return tohtml
  
- def caonele(self,da):
-  return str(da)
+ def ktod(self,k,c):
+  res=""
+  vars = []
+  vals = []
+  kx=json.loads(k)
+  for ds in kx:
+   match ds["types"]:
+    case "inline":
+     vars.append(ds["posts"])
+     vals.append(ds["vals"])
+    case _:
+      vars=[]
+      vals=[]
+  for i in range(len(vars)):
+    c = c.replace(str(vars[i]), str(vals[i]))    
+  return c
+
+ def keys(self,kys):
+  blk = read_xls("getsheet",kys,"website.xlsx")
+  res = self.rowscolstojsonwithhead(blk)
+  return res
  
  def conele(self,da):
   res=""
   mm=""
   for ele,ff in da.items():
-   mm+=ele+'="'+ ff +'" '
+   mm+=ele+'="'+ ff +'" '  
+  
+  if da.get("reqs") == "None" or da.get("reqs") is None:
+   ksy= ""
+  else:   
+   ksy=self.keys(da.get("reqs"))
+
   match da["ele"]:
     case "block":
-      blk=self.block(da["content"])
-      res='<div '+ mm +'>'+ blk +'</div>'
+      blk=self.block(da["content"],ksy)
+      res='<div '+ mm +'>'+ blk + '</div>'
     case "div":
       res='<div '+ mm +'>'+ da["content"] +'</div>'
     case "h1":
@@ -56,7 +83,7 @@ class PYXLSWEB:
     case "h4":
       res='<h4 '+ mm +'>'+ da["content"] +'</h4>'
     case "img":
-      res='<img src='+ da["content"] +' '+ mm +' />'
+      res='<img src='+ 'http://localhost:8000/res/'+da["content"] +' '+ mm +' />'
     case "style":
       res='<style>'+da["id"]+' {'+da["class"]+'}</style>'
     case _:
