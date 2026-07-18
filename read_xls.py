@@ -1,16 +1,14 @@
 import pandas as pd
-import openpyxl
+import openpyxl as ox
 
 def read_xls(ty,sheet,fle):
  res=""
- ob = openpyxl.load_workbook(fle, data_only=True)
+ ob = ox.load_workbook(fle)
  match ty:
   case "getsheets":
    res = ob.sheetnames
   case "getsheet":
    res = ob[sheet]
-  case "rowscolstojson":
-   res = rowscolstojson()
   case _:
-   res = "none"
+   res = ""
  return res
